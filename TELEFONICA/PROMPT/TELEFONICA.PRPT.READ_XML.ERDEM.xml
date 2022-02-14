@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prpt>
+   <metadata>
+      <row>
+         <version>21.0.0</version>
+      </row>
+   </metadata>
+   <general_attributes>
+      <row>
+         <minimum_ae_version>11.2</minimum_ae_version>
+         <child_flags>00000000000000000000000000000000</child_flags>
+         <last_runtimes>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</last_runtimes>
+         <max_parallel_action>1</max_parallel_action>
+         <mrt_time>000000</mrt_time>
+         <name>TELEFONICA.PRPT.READ_XML.ERDEM</name>
+         <type>PRPT</type>
+         <queue>CLIENT_QUEUE</queue>
+         <versioning_id>-1101653434</versioning_id>
+      </row>
+   </general_attributes>
+   <gui_description>
+      <row>
+         <xui><![CDATA[<dialog height="506" icon="PRPT" id="PRPTS" left="279" top="4" width="420"><readpanel fill="b" id="PRPTBOX" nl="1" scroll="v" text="PRPT"><properties><entry name="text">PRPT</entry><entry name="modifiable">0</entry></properties></readpanel></dialog>]]></xui>
+      </row>
+   </gui_description>
+   <elements>
+      <row>
+         <key>ENVIRONMENT</key>
+         <line_number>2</line_number>
+         <name>ENVIRONMENT#</name>
+         <reference>TELEFONICA.VARA.XML.ERDEM</reference>
+         <reference_type>VARA</reference_type>
+         <xpath>//ENVIRONMENT/ENVIRONMENTNAME/@NAME</xpath>
+         <xui><![CDATA[<combo alt="1" customfield="" dynamic="0" enabled="1" fill="b" filter="0" focus="0" id="ENVIRONMENTs.00" initvalue="" modifiable="1" nl="1" onchangereset="" quotes="" reference="TELEFONICA.VARA.XML.ERDEM" resetable="1" strict="1" text="Environment" tooltip="Select the environment to filter servers" vtype="i" xmlkey="ENVIRONMENT" xmlpath="//ENVIRONMENT/ENVIRONMENTNAME/@NAME"><properties><entry listparam="C" name="reference">TELEFONICA.VARA.XML.ERDEM</entry><entry name="text">Environment</entry><entry name="quotes"/><entry name="id">ENVIRONMENTs.00</entry><entry name="enabled">0</entry><entry name="focus">0</entry><entry name="tooltip">Select the environment to filter servers</entry><entry name="dynamic">0</entry><entry name="customfield"/><entry name="xmlkey">ENVIRONMENT</entry><entry name="xmlpath">//ENVIRONMENT/ENVIRONMENTNAME/@NAME</entry><entry name="modifiable">1</entry><entry name="alt">1</entry><entry name="fill">b</entry><entry name="filter">0</entry><entry name="nl">1</entry><entry name="strict">1</entry><entry name="vtype">i</entry><entry name="initvalue"/><entry name="onchangereset"/><entry name="resetable">1</entry></properties><onchange><command request="_internal" target="SERVERs.00" targetaction="onChangeReset" targetparam=""/></onchange></combo>]]></xui>
+         <ui_type>combo</ui_type>
+      </row>
+      <row>
+         <line_number>1</line_number>
+         <name>FILTER#</name>
+         <value>Filters</value>
+         <xui><![CDATA[<label alt="0" customfield="" fill="b" id="FILTERs.00" modifiable="1" nl="1" text="Filters" tooltip="Select One of the main filters"><properties><entry name="id">FILTERs.00</entry><entry name="tooltip">Select One of the main filters</entry><entry name="customfield"/><entry name="modifiable">1</entry><entry name="alt">0</entry><entry name="fill">b</entry><entry name="nl">1</entry><entry name="text">Filters</entry></properties></label>]]></xui>
+         <ui_type>label</ui_type>
+      </row>
+      <row>
+         <key>LOGIC</key>
+         <line_number>3</line_number>
+         <name>LOGIC#</name>
+         <reference>TELEFONICA.VARA.XML.ERDEM</reference>
+         <reference_type>VARA</reference_type>
+         <xpath>//LOGIC/LOGIC/@NAME</xpath>
+         <xui><![CDATA[<combo alt="1" customfield="" dynamic="0" enabled="1" fill="b" filter="0" focus="0" id="LOGICs.00" initvalue="" modifiable="1" nl="1" onchangereset="" quotes="" reference="TELEFONICA.VARA.XML.ERDEM" resetable="1" strict="1" text="Logic ( and/or )" tooltip="" vtype="i" xmlkey="LOGIC" xmlpath="//LOGIC/LOGIC/@NAME"><properties><entry listparam="C" name="reference">TELEFONICA.VARA.XML.ERDEM</entry><entry name="text">Logic ( and/or )</entry><entry name="quotes"/><entry name="id">LOGICs.00</entry><entry name="enabled">0</entry><entry name="focus">0</entry><entry name="tooltip"/><entry name="dynamic">0</entry><entry name="customfield"/><entry name="xmlkey">LOGIC</entry><entry name="xmlpath">//LOGIC/LOGIC/@NAME</entry><entry name="modifiable">1</entry><entry name="alt">1</entry><entry name="fill">b</entry><entry name="filter">0</entry><entry name="nl">1</entry><entry name="strict">1</entry><entry name="vtype">i</entry><entry name="initvalue"/><entry name="onchangereset"/><entry name="resetable">1</entry></properties><onchange><command request="_internal" target="SERVERs.00" targetaction="onChangeReset" targetparam=""/></onchange></combo>]]></xui>
+         <ui_type>combo</ui_type>
+      </row>
+      <row>
+         <line_number>5</line_number>
+         <name>PROPERTIES#</name>
+         <value>Properties</value>
+         <xui><![CDATA[<label alt="0" customfield="" fill="b" id="PROPERTIESs.00" modifiable="1" nl="1" text="Properties" tooltip=""><properties><entry name="id">PROPERTIESs.00</entry><entry name="tooltip"/><entry name="customfield"/><entry name="modifiable">1</entry><entry name="alt">0</entry><entry name="fill">b</entry><entry name="nl">1</entry><entry name="text">Properties</entry></properties></label>]]></xui>
+         <ui_type>label</ui_type>
+      </row>
+      <row>
+         <key>SERVERS</key>
+         <line_number>6</line_number>
+         <name>SERVER#</name>
+         <reference>TELEFONICA.VARA.XML.ERDEM</reference>
+         <reference_type>VARA</reference_type>
+         <xpath>//SERVERS/SERVER[@ENVIRONMENT="&amp;ENVIRONMENT#" &amp;LOGIC# @VERSION="&amp;VERSION#"]/NAME</xpath>
+         <xui><![CDATA[<combo alt="1" customfield="" dynamic="1" enabled="1" fill="b" filter="0" focus="0" id="SERVERs.00" initvalue="" modifiable="1" nl="1" onchangereset="" quotes="" reference="TELEFONICA.VARA.XML.ERDEM" resetable="1" strict="1" text="Servers" tooltip="" vtype="i" xmlkey="SERVERS" xmlpath="//SERVERS/SERVER[@ENVIRONMENT=&quot;&amp;ENVIRONMENT#&quot; &amp;LOGIC# @VERSION=&quot;&amp;VERSION#&quot;]/NAME"><properties><entry listparam="C" name="reference">TELEFONICA.VARA.XML.ERDEM</entry><entry name="text">Servers</entry><entry name="quotes"/><entry name="id">SERVERs.00</entry><entry name="enabled">0</entry><entry name="focus">0</entry><entry name="tooltip"/><entry name="dynamic">1</entry><entry name="customfield"/><entry name="xmlkey">SERVERS</entry><entry name="xmlpath">//SERVERS/SERVER[@ENVIRONMENT=&quot;&amp;ENVIRONMENT#&quot; &amp;LOGIC# @VERSION=&quot;&amp;VERSION#&quot;]/NAME</entry><entry name="modifiable">1</entry><entry name="alt">1</entry><entry name="fill">b</entry><entry name="filter">0</entry><entry name="nl">1</entry><entry name="strict">1</entry><entry name="vtype">i</entry><entry name="initvalue"/><entry name="onchangereset"/><entry name="resetable">1</entry></properties></combo>]]></xui>
+         <ui_type>combo</ui_type>
+      </row>
+      <row>
+         <key>VERSION</key>
+         <line_number>4</line_number>
+         <name>VERSION#</name>
+         <reference>TELEFONICA.VARA.XML.ERDEM</reference>
+         <reference_type>VARA</reference_type>
+         <xpath>//VERSION/VERSIONNAME/@NAME</xpath>
+         <xui><![CDATA[<combo alt="1" customfield="" dynamic="0" enabled="1" fill="b" filter="0" focus="0" id="VERSIONs.00" initvalue="" modifiable="1" nl="1" onchangereset="" quotes="" reference="TELEFONICA.VARA.XML.ERDEM" resetable="1" strict="1" text="Version" tooltip="Select the OS Version" vtype="i" xmlkey="VERSION" xmlpath="//VERSION/VERSIONNAME/@NAME"><properties><entry listparam="C" name="reference">TELEFONICA.VARA.XML.ERDEM</entry><entry name="text">Version</entry><entry name="quotes"/><entry name="id">VERSIONs.00</entry><entry name="enabled">0</entry><entry name="focus">0</entry><entry name="tooltip">Select the OS Version</entry><entry name="dynamic">0</entry><entry name="customfield"/><entry name="xmlkey">VERSION</entry><entry name="xmlpath">//VERSION/VERSIONNAME/@NAME</entry><entry name="modifiable">1</entry><entry name="alt">1</entry><entry name="fill">b</entry><entry name="filter">0</entry><entry name="nl">1</entry><entry name="strict">1</entry><entry name="vtype">i</entry><entry name="initvalue"/><entry name="onchangereset"/><entry name="resetable">1</entry></properties><onchange><command request="_internal" target="SERVERs.00" targetaction="onChangeReset" targetparam=""/></onchange></combo>]]></xui>
+         <ui_type>combo</ui_type>
+      </row>
+   </elements>
+</prpt>

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobs>
+   <metadata>
+      <row>
+         <version>21.0.0</version>
+      </row>
+   </metadata>
+   <general_attributes>
+      <row>
+         <minimum_ae_version>11.2</minimum_ae_version>
+         <auto_deactivation>F</auto_deactivation>
+         <child_flags>00000000000000000000000000000000</child_flags>
+         <deactivation_condition>ANY_OK</deactivation_condition>
+         <platform>UNIX</platform>
+         <last_runtimes>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</last_runtimes>
+         <max_parallel_action>1</max_parallel_action>
+         <mrt_time>000000</mrt_time>
+         <name>PCK.AUTOMIC_FILESYSTEM.PRV.JOB.PACK@UNIX</name>
+         <type>JOBS</type>
+         <inherit_output_filter>N</inherit_output_filter>
+         <queue>CLIENT_QUEUE</queue>
+         <versioning_id>353252669</versioning_id>
+      </row>
+   </general_attributes>
+   <scripts>
+      <row>
+         <process><![CDATA[:INCLUDE PCK.AUTOMIC_FILESYSTEM.PRV.INCLUDE.ATTACH
+
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHANGE_DIRECTORY_TO_AGENT_BIN
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.HEADER.PARAM_VALIDATION
+
+! --------check if wildcard is specified in input----
+:SET &HAS_WILDCARDS# = "N"
+:SET &UC4RB_ARCHIVE_WILDCARDS# = STR_TRIM(&UC4RB_FILE_FOLDER_WILDCARDS#)
+:IF STR_LENGTH(&UC4RB_ARCHIVE_WILDCARDS#)> 0
+:  SET &HAS_WILDCARDS# = "Y"
+
+:ENDIF
+! -----------------------------------------------------------
+
+:SET &UC4RB_PV_ERRORS# = 0
+:SET &UC4RB_LOGGING_PARAMETER# = "Path to source directory or file"
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &UC4RB_DIR_FILE_PACK_INPUT#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &UC4RB_DIR_FILE_PACK_INPUT#
+
+:SET &UC4RB_LOGGING_PARAMETER# = "Path to target file"
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &UC4RB_DIR_FILE_PACK_NAME#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &UC4RB_DIR_FILE_PACK_NAME#
+
+! ----------------------------------------------------------
+:SET &UC4RB_LOGGING_PARAMETER# = "Archive wildcards"
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &UC4RB_ARCHIVE_WILDCARDS#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &UC4RB_ARCHIVE_WILDCARDS#
+
+! ----------------------------------------------------------
+:SET &UC4RB_LOGGING_PARAMETER# = "Archive type"
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &UC4RB_ARCHIVE_TYPE#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &UC4RB_ARCHIVE_TYPE#
+
+:SET &UC4RB_LOGGING_PARAMETER# = "Add .zip/.tar to filename"
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &UC4RB_ADD_ZIP#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &UC4RB_ADD_ZIP#
+
+:SET &UC4RB_LOGGING_PARAMETER# = "Add to existing archive"
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &UC4RB_ADD_TO_EXISING_ARCHIVE#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &UC4RB_ADD_TO_EXISING_ARCHIVE#
+
+:SET &UC4RB_CONVERTED_STRING# = &UC4RB_DIR_FILE_PACK_INPUT#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CONVERT_SLASHES_UNIX_STYLE
+:SET &UC4RB_DIR_FILE_PACK_INPUT# = &UC4RB_CONVERTED_STRING#
+
+:SET &UC4RB_CONVERTED_STRING# = &UC4RB_DIR_FILE_PACK_NAME#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CONVERT_SLASHES_UNIX_STYLE
+:SET &UC4RB_DIR_FILE_PACK_NAME# = &UC4RB_CONVERTED_STRING#
+
+:SET &UC4RB_CHECKME# = &UC4RB_DIR_FILE_PACK_INPUT#
+:INCLUDE PCK.AUTOMIC_FILESYSTEM.PRV.INCLUDE.CHECK_TYPE@UNIX
+
+EXISTSOURCE=$EXIST
+
+INPUTISFILE=$ISFILE
+
+:IF &UC4RB_ADD_ZIP# = "YES"
+:  SET &UC4RB_DIR_FILE_PACK_NAME# = "&UC4RB_DIR_FILE_PACK_NAME#.&UC4RB_ARCHIVE_TYPE#"
+:ENDIF
+
+:SET &UC4RB_CHECKME# = &UC4RB_DIR_FILE_PACK_NAME#
+:INCLUDE PCK.AUTOMIC_FILESYSTEM.PRV.INCLUDE.CHECK_TYPE@UNIX
+
+ISFILETARGET=$ISFILE
+
+errors=0
+
+if [ "$EXISTSOURCE" -eq "0" ] ;
+then
+:SET &UC4RB_LOGGING_PARAMETER# = "Path to directory or file"
+:SET &UC4RB_LOGGING_ERROR# = "Source directory/file name '&UC4RB_DIR_FILE_PACK_INPUT#' doesn't exist."
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.ERROR
+   errors=1
+fi
+
+:IF &UC4RB_ADD_TO_EXISING_ARCHIVE# = "NO"
+ if [ "$ISFILETARGET" -eq "1" ] ;
+ then
+:  SET &UC4RB_LOGGING_PARAMETER# = "Path to target file"
+:  SET &UC4RB_LOGGING_ERROR# = "The package '&UC4RB_DIR_FILE_PACK_NAME#' already exists."
+:  INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.ERROR
+   errors=2
+ fi
+:ENDIF
+
+if [ "$ISDIR" -eq "1" ] ;
+ then
+:SET &UC4RB_LOGGING_PARAMETER# = "Path to target file"
+:SET &UC4RB_LOGGING_ERROR# = "Invalid filename input. A folder with name '&UC4RB_DIR_FILE_PACK_NAME#' already exists."
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.ERROR
+   errors=2
+fi
+
+! Check EXT: in value
+:IF &UC4RB_PV_ERRORS# = 100
+  exit 100;
+:ENDIF
+
+if [ $errors -gt 0 ] ;
+  then
+    exit $errors;
+fi
+
+:SET &TEMP_DIR# = ""
+! ---define path for a temp directory----
+:  SET &AGENT_TEMPDIR# = GET_VAR('UC_EX_PATH_TEMP', &AGENT#)
+:  SET &TEMP_DIR_NAME# = STR_CAT("PACK_", &$RUNID#)
+:  SET &TEMP_DIR# = STR_CAT(&AGENT_TEMPDIR#, &TEMP_DIR_NAME#)
+! -----cleanup if temp folder exists-------
+   if [ -d &TEMP_DIR# ];then rm -rf &TEMP_DIR#;fi
+
+! -----create the temp folder---------
+   mkdir "&TEMP_DIR#"
+
+:  SET &UC4RB_LOGGING_PARAMETER# = "Temporary PACK directory"
+:  INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &TEMP_DIR#
+:  INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &TEMP_DIR#
+
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.HEADER.EXECUTION
+
+:SET &ARCHIVED_LIST_MSG# = 'echo "-------------File(s) Archived---------------"'
+
+:IF &HAS_WILDCARDS# = "Y"
+ &ARCHIVED_LIST_MSG#
+:  SET &COMMAND_FILE_INCLUDES# = ""
+:  DEFINE &WILDCARD_ARR#, string, 20
+:  FILL &WILDCARD_ARR#[] = STR_SPLIT(&UC4RB_ARCHIVE_WILDCARDS#, ",")
+:  SET &WILDCARD_ARR_LEN# = LENGTH(&WILDCARD_ARR#[], SIZE)
+:  SET &INDX# = 1
+:  WHILE &INDX# LE &WILDCARD_ARR_LEN#
+
+:    SET &INDX# = FORMAT(&INDX#, "0")
+:    SET &FL_PTTR# = STR_TRIM(&WILDCARD_ARR#[&INDX#])
+:    IF STR_LENGTH(&FL_PTTR#)> 0
+
+:      SET &COMMAND_FILE_INCLUDES# = STR_CAT(&COMMAND_FILE_INCLUDES#, " --include=")
+:      SET &COMMAND_FILE_INCLUDES# = STR_CAT(&COMMAND_FILE_INCLUDES#, '"&FL_PTTR#"')
+
+:      SET &INDX# = &INDX#+ 1
+:      IF &INDX# <= &WILDCARD_ARR_LEN#
+:        SET &WILDCARD_FILE# = STR_CAT(&WILDCARD_FILE#, ",")
+:      ENDIF
+:    ENDIF
+:  ENDWHILE
+
+:  SET &CMD_FOR_FILE# = 'rsync -v --archive --include="*/"'
+:  SET &CMD_FOR_FOLDER# = 'rsync -v --archive --include="*/**"'
+
+:  SET &CMD_FOR_FILE# = STR_CAT(&CMD_FOR_FILE#, &COMMAND_FILE_INCLUDES#)
+:  SET &CMD_FOR_FILE# = STR_CAT(&CMD_FOR_FILE#, " --exclude=""*"" --prune-empty-dirs ")
+:  SET &CMD_FOR_FILE# = STR_CAT(&CMD_FOR_FILE#, "&UC4RB_DIR_FILE_PACK_INPUT#/ ")
+:  SET &CMD_FOR_FILE# = STR_CAT(&CMD_FOR_FILE#, "&TEMP_DIR#/")
+
+:  SET &CMD_FOR_FOLDER# = STR_CAT(&CMD_FOR_FOLDER#, &COMMAND_FILE_INCLUDES#)
+:  SET &CMD_FOR_FOLDER# = STR_CAT(&CMD_FOR_FOLDER#, " --exclude=""*"" --prune-empty-dirs ")
+:  SET &CMD_FOR_FOLDER# = STR_CAT(&CMD_FOR_FOLDER#, "&UC4RB_DIR_FILE_PACK_INPUT#/ ")
+:  SET &CMD_FOR_FOLDER# = STR_CAT(&CMD_FOR_FOLDER#, "&TEMP_DIR#/")
+
+if [ -f "&UC4RB_DIR_FILE_PACK_INPUT#" ]; then
+      rsync "&UC4RB_DIR_FILE_PACK_INPUT#" "&TEMP_DIR#"
+      echo "&UC4RB_DIR_FILE_PACK_INPUT#"
+    else
+      echo "root folder: &UC4RB_DIR_FILE_PACK_INPUT#"
+      out1=$(&CMD_FOR_FILE# | head --lines=-3 | tail --lines=+2)
+      out2=$(&CMD_FOR_FOLDER# | head --lines=-3 | tail --lines=+2)
+
+      echo "${out1}"
+      echo "${out2}"
+
+    fi
+:  SET &UC4RB_DIR_FILE_PACK_INPUT# = &TEMP_DIR#
+
+:ELSE
+    &ARCHIVED_LIST_MSG#
+    if [ "$INPUTISFILE" -eq 1 ]; then
+       echo "root file: '&UC4RB_DIR_FILE_PACK_INPUT#'"
+       rsync &UC4RB_DIR_FILE_PACK_INPUT# '&TEMP_DIR#'
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_SHELL_CMD@UNIX
+    else
+     echo "root folder: '&UC4RB_DIR_FILE_PACK_INPUT#'"
+     rsync -av --archive &UC4RB_DIR_FILE_PACK_INPUT#/ &TEMP_DIR# | head --lines=-3 | tail --lines=+3
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_SHELL_CMD@UNIX
+    fi
+:  SET &UC4RB_DIR_FILE_PACK_INPUT# = &TEMP_DIR#
+:ENDIF
+
+&ARCHIVED_LIST_MSG#
+! zip -5 -y -r -q &UC4RB_DIR_FILE_PACK_NAME# $PACKAGECONTENT
+  java -jar "&$AGENT_RESOURCES_CLIENT#file-system-tool.jar" file Pack "&UC4RB_DIR_FILE_PACK_INPUT#" "&UC4RB_DIR_FILE_PACK_NAME#" "&UC4RB_ARCHIVE_TYPE#"
+
+! ---cleanup temp folder----------------
+:IF STR_LENGTH(&TEMP_DIR#)> 1
+ if [ -d &TEMP_DIR# ];then rm -rf &TEMP_DIR#;fi
+:ENDIF
+! ----------------------------------------------
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_SHELL_CMD@UNIX]]></process>
+      </row>
+      <row>
+         <pre_process>:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.PREPARE_JOB</pre_process>
+      </row>
+   </scripts>
+   <job_attributes>
+      <row>
+         <activation_at_runtime>1</activation_at_runtime>
+         <platform>UNIX</platform>
+         <agent><![CDATA[<UNIX>]]></agent>
+         <job_report_path>2</job_report_path>
+         <priority>0</priority>
+         <unix_shell>-bash</unix_shell>
+         <unix_shell_options></unix_shell_options>
+         <unix_type></unix_type>
+         <unix_cmd></unix_cmd>
+      </row>
+   </job_attributes>
+   <rollback_definitions>
+      <row>
+      </row>
+   </rollback_definitions>
+</jobs>

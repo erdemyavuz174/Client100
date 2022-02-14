@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobs>
+   <metadata>
+      <row>
+         <version>21.0.0</version>
+      </row>
+   </metadata>
+   <general_attributes>
+      <row>
+         <minimum_ae_version>11.2</minimum_ae_version>
+         <auto_deactivation>F</auto_deactivation>
+         <child_flags>00000000000000000000000000000000</child_flags>
+         <deactivation_condition>ANY_OK</deactivation_condition>
+         <platform>WINDOWS</platform>
+         <last_runtimes>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</last_runtimes>
+         <max_parallel_action>1</max_parallel_action>
+         <mrt_time>000000</mrt_time>
+         <name>PCK.AUTOMIC_FILESYSTEM.PRV.JOB.PACK@WINDOWS</name>
+         <type>JOBS</type>
+         <inherit_output_filter>N</inherit_output_filter>
+         <queue>CLIENT_QUEUE</queue>
+         <versioning_id>1653713582</versioning_id>
+      </row>
+   </general_attributes>
+   <scripts>
+      <row>
+         <process><![CDATA[:INCLUDE PCK.ITPA_SHARED.PUB.INCLUDE.POWERSHELL_UTILITY
+:INCLUDE PCK.AUTOMIC_FILESYSTEM.PRV.INCLUDE.ATTACH
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHANGE_DIRECTORY_TO_AGENT_BIN
+
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.HEADER.PARAM_VALIDATION
+
+! --------check if wildcard is specified in input----
+:SET &HAS_WILDCARDS# = "N"
+:SET &UC4RB_ARCHIVE_WILDCARDS# = STR_TRIM(&UC4RB_FILE_FOLDER_WILDCARDS#)
+:IF STR_LENGTH(&UC4RB_ARCHIVE_WILDCARDS#)> 0
+:  SET &HAS_WILDCARDS# = "Y"
+
+:ENDIF
+
+:SET &UC4RB_PV_ERRORS# = 0
+:SET &UC4RB_LOGGING_PARAMETER# = "Path to source directory or file"
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &UC4RB_DIR_FILE_PACK_INPUT#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &UC4RB_DIR_FILE_PACK_INPUT#
+
+:SET &UC4RB_LOGGING_PARAMETER# = "Path to target file"
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &UC4RB_DIR_FILE_PACK_NAME#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &UC4RB_DIR_FILE_PACK_NAME#
+
+:SET &UC4RB_LOGGING_PARAMETER# = "Archive wildcards"
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &UC4RB_ARCHIVE_WILDCARDS#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &UC4RB_ARCHIVE_WILDCARDS#
+
+:SET &UC4RB_LOGGING_PARAMETER# = "Archive type"
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &UC4RB_ARCHIVE_TYPE#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &UC4RB_ARCHIVE_TYPE#
+
+:SET &UC4RB_LOGGING_PARAMETER# = "Add .zip/.tar to filename"
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &UC4RB_ADD_ZIP#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &UC4RB_ADD_ZIP#
+
+:SET &UC4RB_LOGGING_PARAMETER# = "Add to existing archive"
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &UC4RB_ADD_TO_EXISING_ARCHIVE#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &UC4RB_ADD_TO_EXISING_ARCHIVE#
+
+:SET &UC4RB_CONVERTED_STRING# = &UC4RB_DIR_FILE_PACK_NAME#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CONVERT_SLASHES_WINDOWS_STYLE
+:SET &UC4RB_DIR_FILE_PACK_NAME# = &UC4RB_CONVERTED_STRING#
+
+:SET &UC4RB_CONVERTED_STRING# = &UC4RB_DIR_FILE_PACK_INPUT#
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CONVERT_SLASHES_WINDOWS_STYLE
+:SET &UC4RB_DIR_FILE_PACK_INPUT# = &UC4RB_CONVERTED_STRING#
+
+:SET &UC4RB_CHECKME# = &UC4RB_DIR_FILE_PACK_INPUT#
+:INCLUDE PCK.AUTOMIC_FILESYSTEM.PRV.INCLUDE.CHECK_TYPE@WINDOWS
+
+$EXISTSOURCE=$EXIST
+
+:IF &UC4RB_ADD_ZIP# = "YES"
+:  SET &UC4RB_ARCHIVE_FILE_NAME# = "&UC4RB_DIR_FILE_PACK_NAME#.&UC4RB_ARCHIVE_TYPE#"
+:ELSE
+:  SET &UC4RB_ARCHIVE_FILE_NAME# = "&UC4RB_DIR_FILE_PACK_NAME#"
+:ENDIF
+
+:SET &UC4RB_CHECKME# = &UC4RB_ARCHIVE_FILE_NAME#
+:INCLUDE PCK.AUTOMIC_FILESYSTEM.PRV.INCLUDE.CHECK_TYPE@WINDOWS
+
+$ISFILETARGET=$ISFILE
+
+$errors = 0
+if  ($EXISTSOURCE -eq 0) {
+:SET &UC4RB_LOGGING_PARAMETER# = "Path to directory or file"
+:SET &UC4RB_LOGGING_ERROR# = "Source directory/file name '&UC4RB_DIR_FILE_PACK_INPUT#' doesn't exist."
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.ERROR
+   $errors = 1
+}
+
+:IF &UC4RB_ADD_TO_EXISING_ARCHIVE# = "NO"
+ if  ($ISFILETARGET -eq 1) {
+:  SET &UC4RB_LOGGING_PARAMETER# = "Path to target file"
+:  SET &UC4RB_LOGGING_ERROR# = "The package '&UC4RB_ARCHIVE_FILE_NAME#' already exists."
+:  INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.ERROR
+   $errors = 2
+ }
+:ENDIF
+
+if  ($ISDIR -eq 1) {
+:SET &UC4RB_LOGGING_PARAMETER# = "Path to target file"
+:SET &UC4RB_LOGGING_ERROR# = "Invalid filename input. A folder with name '&UC4RB_ARCHIVE_FILE_NAME#' already exists."
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.ERROR
+   $errors = 2
+}
+! Check EXT: in value
+:IF &UC4RB_PV_ERRORS# = 100
+  __uc_return( 100 )
+:ENDIF
+
+if ( $errors -gt 0 ) {
+  __uc_return( $errors )
+}
+
+:SET &TEMP_DIR# = ""
+:SET &CREATE_TEMP_DIR# = "N"
+:IF &UC4RB_ADD_TO_EXISING_ARCHIVE# = "YES"
+:  SET &CREATE_TEMP_DIR# = "Y"
+:ELSE
+:  IF &HAS_WILDCARDS# = "Y"
+:    SET &CREATE_TEMP_DIR# = "Y"
+:  ENDIF
+:ENDIF
+
+:IF &CREATE_TEMP_DIR# = "Y"
+! ---define path for a temp directory----
+:  SET &AGENT_TEMPDIR# = GET_VAR('UC_EX_PATH_TEMP', &AGENT#)
+:  SET &TEMP_DIR_NAME# = STR_CAT("PACK_", &$RUNID#)
+:  SET &TEMP_DIR# = STR_CAT(&AGENT_TEMPDIR#, &TEMP_DIR_NAME#)
+
+:  SET &UC4RB_LOGGING_PARAMETER# = "Temporary PACK directory"
+:  INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.PARAM &UC4RB_LOGGING_PARAMETER_VAL# = &TEMP_DIR#
+:  INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_PARAM_VALIDITY &INPUT_PARAM# = &TEMP_DIR#
+! -----create the temp folder---------
+
+  New-Item -Path "&TEMP_DIR#" -ItemType Directory
+
+:ENDIF
+
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.LOGGING.HEADER.EXECUTION
+
+:SET &ARCHIVED_LIST_MSG# = 'Write-Host "-------------File(s) Archived---------------"'
+
+:IF &HAS_WILDCARDS# = "Y"
+ &ARCHIVED_LIST_MSG#
+:  SET &WILDCARD_FILE# = ""
+:  DEFINE &WILDCARD_ARR#, string, 20
+:  FILL &WILDCARD_ARR#[] = STR_SPLIT(&UC4RB_ARCHIVE_WILDCARDS#, ",")
+:  SET &WILDCARD_ARR_LEN# = LENGTH(&WILDCARD_ARR#[], SIZE)
+:  SET &INDX# = 1
+:  WHILE &INDX# LE &WILDCARD_ARR_LEN#
+
+:    SET &INDX# = FORMAT(&INDX#, "0")
+:    SET &FL_PTTR# = STR_TRIM(&WILDCARD_ARR#[&INDX#])
+:    IF STR_LENGTH(&FL_PTTR#)> 0
+
+:      SET &WILDCARD_FILE# = STR_CAT(&WILDCARD_FILE#, "'&FL_PTTR#'")
+
+:      SET &INDX# = &INDX#+ 1
+:      IF &INDX# <= &WILDCARD_ARR_LEN#
+:        SET &WILDCARD_FILE# = STR_CAT(&WILDCARD_FILE#, ",")
+:      ENDIF
+:    ENDIF
+:  ENDWHILE
+
+$sourceFile = '&UC4RB_DIR_FILE_PACK_INPUT#'
+$destinationFile = '&TEMP_DIR#'
+
+if( Test-Path -Path $sourceFile -PathType Leaf){
+  Copy-Item $sourceFile -Destination "&TEMP_DIR#" -Force
+  Write-Host $sourceFile
+}
+Else
+{
+ $includePattern = @(&WILDCARD_FILE#)
+ $tempPath = ''
+ $sourceFiles = ''
+
+ $hashSet = New-Object 'System.Collections.Generic.HashSet[String]'
+
+ function CopyFilesWithPattern {
+	$childFiles = Get-ChildItem $tempPath -Recurse
+	if($childFiles.length -gt 0)
+	{	
+		$childFiles | Foreach-Object `
+		{
+	    $DestFileSubstr = $_.Fullname.SubString($sourceFile.Length)
+        $DestFile =  "$destinationFile$DestFileSubstr"
+				
+		If(Test-Path -Path $tempPath\$_ -PathType Container){
+			$null = New-Item -Path  $DestFile -Type Directory -Force
+		}
+		Else{
+			$null = New-Item -Path  $DestFile -Type File -Force
+			Copy-Item -Path  $_.FullName -Destination $DestFile -Force
+            [void]$hashSet.Add($_.FullName)
+			}
+		}
+	 }
+  }
+
+If ($includePattern.Length -gt 0){
+	foreach ($pttr in $includePattern) {	
+		$sourceFiles = Get-ChildItem -Path $sourceFile -Recurse -Include $pttr
+		foreach ($file in $sourceFiles) {		
+		$tempPath = $file							
+			If(Test-Path -Path $tempPath -PathType Leaf){
+			$DestFileSubstr = $tempPath.Fullname.SubString($sourceFile.Length)
+			$DestFile =  "$destinationFile$DestFileSubstr"
+			
+			$null = New-Item -Path  $DestFile -Type File -Force
+			Copy-Item -Path  $tempPath -Destination $DestFile -Force
+            [void]$hashSet.Add($tempPath)
+		}
+		Else{
+			CopyFilesWithPattern
+			}
+		}	
+	 }
+  }
+ foreach ($entry in $hashSet){Write-Host $entry}
+}
+
+:  SET &UC4RB_DIR_FILE_PACK_INPUT# = &TEMP_DIR#
+
+:ELSE
+:  IF &UC4RB_ADD_TO_EXISING_ARCHIVE# = "NO"
+    &ARCHIVED_LIST_MSG#
+    Get-ChildItem "&UC4RB_DIR_FILE_PACK_INPUT#" -Recurse | Foreach-Object ` {Write-Host $_.FullName}
+:  ENDIF
+
+:ENDIF
+
+ &ARCHIVED_LIST_MSG#
+
+ java -jar "&$AGENT_RESOURCES_CLIENT#file-system-tool.jar" file Pack "&UC4RB_DIR_FILE_PACK_INPUT#" "&UC4RB_ARCHIVE_FILE_NAME#" "&UC4RB_ARCHIVE_TYPE#"
+
+:IF STR_LENGTH(&TEMP_DIR#)> 1
+if( Test-Path -Path "&TEMP_DIR#" ){
+  Remove-Item "&TEMP_DIR#" -Recurse -Force -ErrorAction Ignore
+}
+:ENDIF
+
+:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.CHECK_POWERSHELL_CMD@WINDOWS]]></process>
+      </row>
+      <row>
+         <pre_process>:INCLUDE PCK.ITPA_SHARED.PRV.INCLUDE.PREPARE_JOB</pre_process>
+      </row>
+   </scripts>
+   <job_attributes>
+      <row>
+         <activation_at_runtime>1</activation_at_runtime>
+         <platform>WINDOWS</platform>
+         <agent><![CDATA[<WIN>]]></agent>
+         <job_report_path>2</job_report_path>
+         <win_work_dir>c:\</win_work_dir>
+         <win_typ>2</win_typ>
+         <win_view>0</win_view>
+         <win_logon_as_batch>0</win_logon_as_batch>
+         <win_show_at_desktop>0</win_show_at_desktop>
+         <win_report_by_script>0</win_report_by_script>
+         <job_object>1</job_object>
+         <win_cmd></win_cmd>
+      </row>
+   </job_attributes>
+   <rollback_definitions>
+      <row>
+      </row>
+   </rollback_definitions>
+</jobs>

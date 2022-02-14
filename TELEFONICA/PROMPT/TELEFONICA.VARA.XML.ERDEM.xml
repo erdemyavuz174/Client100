@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vara>
+   <metadata>
+      <row>
+         <version>21.0.0</version>
+      </row>
+   </metadata>
+   <general_attributes>
+      <row>
+         <minimum_ae_version>11.2</minimum_ae_version>
+         <last_runtimes>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</last_runtimes>
+         <name>TELEFONICA.VARA.XML.ERDEM</name>
+         <type>VARA</type>
+         <sub_type>XML</sub_type>
+         <versioning_id>-177401823</versioning_id>
+      </row>
+   </general_attributes>
+   <variable_definitions>
+      <row>
+         <column_count>5</column_count>
+         <on_not_found>I</on_not_found>
+         <sort_order>0</sort_order>
+         <type>XML</type>
+         <data_type>C</data_type>
+         <validity_range>FREI</validity_range>
+      </row>
+   </variable_definitions>
+   <static_values>
+      <row>
+         <client>100</client>
+         <xml><![CDATA[<ENVIRONMENT><ENVIRONMENTNAME NAME="OSS_Fija_Certificacion"/><ENVIRONMENTNAME NAME="TELYCO_Convergente_Productiv"/><ENVIRONMENTNAME NAME="OSS_Convergente_Productivo"/><ENVIRONMENTNAME NAME="Herramientas_Movil_Productivo"/><ENVIRONMENTNAME NAME="BSS_Movil_Productivo"/><ENVIRONMENTNAME NAME="BI_Convergente_Productivo-Elastic"/><ENVIRONMENTNAME NAME="OSS_Convergente_Certificacion"/><ENVIRONMENTNAME NAME="TCRM_Convergente_Productivo-Impacte"/><ENVIRONMENTNAME NAME="OSS_Fija_Productivo-CSC"/></ENVIRONMENT>]]></xml>
+         <validity_range>FREI</validity_range>
+         <key>ENVIRONMENT</key>
+      </row>
+      <row>
+         <client>100</client>
+         <xml><![CDATA[<LOGIC><LOGIC NAME="and"/><LOGIC NAME="or"/></LOGIC>]]></xml>
+         <validity_range>FREI</validity_range>
+         <key>LOGIC</key>
+      </row>
+      <row>
+         <client>100</client>
+         <xml><![CDATA[<SERVERS><SERVER ENVIRONMENT="OSS_Fija_Certificacion" VERSION="Oracle Solaris 10 1/13 s10s_u11wos_24a SPARC"><IP>10.147.39.225</IP><NAME>b1mcp1r</NAME></SERVER><SERVER ENVIRONMENT="OSS_Fija_Certificacion" VERSION="Solaris 8 2/02 s28s_u7wos_08a SPARC"><IP>10.147.137.56</IP><NAME>bestdm2w-01</NAME></SERVER><SERVER ENVIRONMENT="OSS_Fija_Certificacion" VERSION="Solaris 8 2/02 s28s_u7wos_08a SPARC"><IP>10.147.137.56</IP><NAME>bestprox-01</NAME></SERVER><SERVER ENVIRONMENT="TELYCO_Convergente_Productivo" VERSION="OOracle Solaris 11.3.33.5.0"><IP>172.16.71.149</IP><NAME>birac02</NAME></SERVER></SERVERS>]]></xml>
+         <validity_range>FREI</validity_range>
+         <key>SERVERS</key>
+      </row>
+      <row>
+         <client>100</client>
+         <xml><![CDATA[<persons><person age="28" firstName="Hans" lastName="Mustermann"/><person age="33" firstName="Herbert" lastName="Möllemann"/><person age="37" firstName="Peter" lastName="Meier"/><person age="45" firstName="Ulrike" lastName="Albrecht"/></persons>]]></xml>
+         <validity_range>FREI</validity_range>
+         <key>TEST</key>
+      </row>
+      <row>
+         <client>100</client>
+         <xml><![CDATA[<VERSION><VERSIONNAME NAME="Red Hat Enterprise Linux Server release 7.2 (Maipo)"/><VERSIONNAME NAME="Red Hat Enterprise Linux Server release 7.7 (Maipo)"/><VERSIONNAME NAME="Red Hat Enterprise Linux Server release 7.9 (Maipo)"/><VERSIONNAME NAME="Oracle Solaris 11.3.22.3.0"/><VERSIONNAME NAME="HP-UX B.11.31"/><VERSIONNAME NAME="VIO 2.2.5.20"/><VERSIONNAME NAME="Solaris 8 2/02 s28s_u7wos_08a SPARC"/><VERSIONNAME NAME="Solaris 8 7/01 s28s_u5wos_08 SPARC"/><VERSIONNAME NAME="AIX 5.3.0.0"/><VERSIONNAME NAME="Oracle Solaris 10 1/13 s10s_u11wos_24a SPARC"/></VERSION>]]></xml>
+         <validity_range>FREI</validity_range>
+         <key>VERSION</key>
+      </row>
+   </static_values>
+</vara>
