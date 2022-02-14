@@ -32,7 +32,7 @@
       </row>
       <row>
          <client>100</client>
-         <value1>https://github.com/erdemyavuz174/Client100.git</value1>
+         <value1>git@github.com:erdemyavuz174/Client100.git</value1>
          <validity_range>FREI</validity_range>
          <key>REMOTE_REPOSITORY_URL</key>
       </row>
