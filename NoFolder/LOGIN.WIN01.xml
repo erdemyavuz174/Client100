@@ -18,7 +18,7 @@
    <logins>
       <row>
          <agent>WIN01</agent>
-         <login>domain\admin.yavuz</login>
+         <login>domain\erdem.yavuz</login>
          <platform>WINDOWS</platform>
          <olc_vault>AutomationEngine</olc_vault>
       </row>

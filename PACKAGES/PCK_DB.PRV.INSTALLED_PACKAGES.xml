@@ -31,6 +31,7 @@
          <client>100</client>
          <value1>AIOPS Shared</value1>
          <value2>1.0.3</value2>
+         <value3> </value3>
          <value4>AIOps</value4>
          <value5>Action Pack</value5>
          <validity_range>FREI</validity_range>
@@ -48,9 +49,39 @@
       </row>
       <row>
          <client>100</client>
-         <value1>Test</value1>
+         <value1>Automic Filesystem</value1>
+         <value2>1.4.5</value2>
+         <value3>PCK.ITPA_SHARED ~&gt; 1.3</value3>
+         <value4>File, Disk</value4>
+         <value5>Action Pack</value5>
+         <validity_range>FREI</validity_range>
+         <key>PCK.AUTOMIC_FILESYSTEM</key>
+      </row>
+      <row>
+         <client>100</client>
+         <value1>Automic Git</value1>
+         <value2>1.1.1</value2>
+         <value3>PCK.ITPA_SHARED ~&gt; 1.1,PCK.AUTOMIC_FILESYSTEM ~&gt; 1.1</value3>
+         <value4>SCM,Versioning</value4>
+         <value5>Action Pack</value5>
+         <validity_range>FREI</validity_range>
+         <key>PCK.AUTOMIC_GIT</key>
+      </row>
+      <row>
+         <client>100</client>
+         <value1>Atlassian_BITBUCKET</value1>
          <value2>1.0.0</value2>
+         <value3>PCK.ITPA_SHARED ~&gt; 1.1,PCK.AUTOMIC_RA_REST ~&gt; 1.0</value3>
+         <value5>Action Pack</value5>
+         <validity_range>FREI</validity_range>
+         <key>PCK.CUSTOM_ATLASSIAN_BITBUCKET</key>
+      </row>
+      <row>
+         <client>100</client>
+         <value1>Test</value1>
+         <value2>1.0.1</value2>
          <value3>PCK.ITPA_SHARED ~&gt; 1.1</value3>
+         <value4> </value4>
          <value5>Action Pack</value5>
          <validity_range>FREI</validity_range>
          <key>PCK.CUSTOM_TEST</key>
@@ -59,6 +90,7 @@
          <client>100</client>
          <value1>ITPA Shared</value1>
          <value2>1.3.2</value2>
+         <value3> </value3>
          <value4>Utility</value4>
          <value5>Action Pack</value5>
          <validity_range>FREI</validity_range>
