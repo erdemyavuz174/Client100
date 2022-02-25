@@ -8,12 +8,10 @@
    <general_attributes>
       <row>
          <minimum_ae_version>11.2</minimum_ae_version>
-         <child_flags>00000000000000000000000000000000</child_flags>
-         <last_runtimes>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</last_runtimes>
          <name>PCK.CUSTOM_TEST.PUB.PROMPT_EXTERNAL_MAP</name>
          <type>VARA</type>
          <sub_type>STATIC</sub_type>
-         <versioning_id>-351619479</versioning_id>
+         <versioning_id>-351619478</versioning_id>
       </row>
    </general_attributes>
    <variable_definitions>
@@ -27,6 +25,18 @@
       </row>
    </variable_definitions>
    <static_values>
+      <row>
+         <client>100</client>
+         <value1>&amp;AGENT#</value1>
+         <validity_range>FREI</validity_range>
+         <key>PCK.CUSTOM_TEST.PUB.ACTION.RUNCMD/AGENT#</key>
+      </row>
+      <row>
+         <client>100</client>
+         <value1>&amp;LOGIN#</value1>
+         <validity_range>FREI</validity_range>
+         <key>PCK.CUSTOM_TEST.PUB.ACTION.RUNCMD/LOGIN#</key>
+      </row>
       <row>
          <client>100</client>
          <value1>&amp;AGENT#</value1>

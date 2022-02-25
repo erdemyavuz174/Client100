@@ -8,11 +8,9 @@
    <general_attributes>
       <row>
          <minimum_ae_version>11.2</minimum_ae_version>
-         <child_flags>00000000000000000000000000000000</child_flags>
-         <last_runtimes>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</last_runtimes>
          <name>PCK.CUSTOM_TEST.PUB.LICENSES</name>
          <type>DOCU</type>
-         <versioning_id>389672621</versioning_id>
+         <versioning_id>389672622</versioning_id>
       </row>
    </general_attributes>
 </docu>
